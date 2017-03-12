@@ -8,6 +8,7 @@
 		</style>
 	</head>
 	<body>
+		<div><div id="email"></div></div>
 		<section>
 			<header><strong>delimiters and translations as single text node</strong></header>
 			....Who We Are..Qui nous sommes..Quiénes somos....
@@ -136,10 +137,101 @@
 			<input type="text" value="....Who We Are..Qui nous sommes..Quiénes somos...." title="distractor">
 		</section>
 		
+		<section>
+			<header><strong>Squarespace : 0 or multiple likes</strong></header>
+			<span class="like-count">0 Likes</span>
+		</section>
+		
+		<section>
+			<header><strong>Squarespace : 1 like</strong></header>
+			<span class="like-count">1 Like</span>
+		</section>
+		
+		<section>
+			<header><strong>Squarespace : share link</strong></header>
+			<div class="ss-social-button"><span class="ss-social-button-icon"></span>Share</div>
+		</section>
+		
+		<section>
+			<header><strong>Squarespace : categories</strong></header>
+			<div class="tags-cats"><em>categories</em>/<a class="category" href="#....Who%20We%20Are..Qui%20nous%20sommes..Quiénes%20somos....">....Who We Are..Qui nous sommes..Quiénes somos....</a><br></div>
+		</section>
+		
+		<section>
+			<header><strong>Squarespace : submit button</strong></header>
+			<input class="button sqs-system-button sqs-editable-button" type="submit" value="Submit">
+		</section>
+		
 		<script>
+			var langMap = {
+				en: "English",
+				fr: "Français",
+				es: "Español"
+			};
+			var langCodeList = Object.keys(langMap);
 			// multitongue 0.2.0
 			var Multitongue=function(e,t){"use strict";"number"==typeof e?this.langIndex=e:(t=e,this.langIndex=t&&t.langIndex||null),this.delimiterMap={groupStart:t&&t.groupStart||"....",languageSeparator:t&&t.languageSeparator||"..",groupEnd:t&&t.groupEnd||"...."},this.filterAttribute=function(e){for(var t=[],i=0;;){var n=e.indexOf(this.delimiterMap.groupStart,i);if(n===-1)break;var a=n+this.delimiterMap.groupStart.length,r=e.indexOf(this.delimiterMap.groupEnd,a);if(r===-1)break;var l=r+this.delimiterMap.groupEnd.length,o=e.substring(a,r).split(this.delimiterMap.languageSeparator);t.push(e.substring(i,n)),t.push(o[void 0===o[this.langIndex]?0:this.langIndex]),i=l}return 0===t.length?null:(t.push(e.substring(i)),t.join(""))},this.walk=function(e,t,i,n,a,r,l){var o=e;do{"function"==typeof i&&i(o);var d;if(("function"!=typeof a||a(o))&&o.firstChild)d=o.firstChild,"function"==typeof r&&r(o,d);else if(o.nextSibling)d=o.nextSibling;else{d=o;do{var u=d.parentNode;"function"==typeof l&&l(d,u),d=u}while(d!==t&&!d.nextSibling);d!==t&&(d=d.nextSibling)}"function"==typeof n&&n(o,d),o=d}while(o!==t)},this.textNodeSeparate=function(e,t){var i=e.data.indexOf(t);return i===-1?e:(i>0&&(e=e.splitText(i)),e.data.length>t.length&&e.splitText(t.length),e)},this.pig=function(e,t){var i=this,n=0,a=0,r=function(r){r!==e&&r!==t&&r.nodeType===Node.TEXT_NODE&&(r.data===i.delimiterMap.languageSeparator&&++n===i.langIndex&&(a=0),r=i.textNodeSeparate(r,i.delimiterMap.languageSeparator))},l=function(){n!==i.langIndex&&++a},o=function(e){a>0&&(e.parentNode.removeChild(e),--a)},d=function(a){a!==e&&a!==t&&(a.firstChild||null===a.parentNode||(n!==i.langIndex||a.nodeType===Node.TEXT_NODE&&a.data===i.delimiterMap.languageSeparator)&&a.parentNode.removeChild(a))};this.walk(e,t,r,d,null,l,o)},this.reduce=function(e){if(e.nodeType||void 0===e.length){var t=null,i=this,n=function(e){e.nodeType===Node.TEXT_NODE&&(e=null===t?i.textNodeSeparate(e,i.delimiterMap.groupStart):i.textNodeSeparate(e,i.delimiterMap.groupEnd))},a=function(e){if(e.nodeType===Node.TEXT_NODE)null===t?e.data===i.delimiterMap.groupStart&&(t=e):e.data===i.delimiterMap.groupEnd&&(i.pig(t,e),t.parentNode.removeChild(t),e.parentNode.removeChild(e),t=null);else if(e.nodeType===Node.ELEMENT_NODE)for(var n=0;n<e.attributes.length;n++)if(["href","src"].indexOf(e.attributes[n].name)===-1){var a=i.filterAttribute(e.attributes[n].value);null!==a&&(e.attributes[n].value=a)}},r=function(e){return"SCRIPT"!==e.tagName};this.walk(e,e,n,a,r)}else for(var l=0;l<e.length;l++)this.reduce(e[l])}};
-			if (window.location === window.top.location) {(new Multitongue({langIndex: 0})).reduce(document.getElementsByTagName("html"));}
+			Multitongue.element=function(t){"use strict";for(var e=t.split(","),n=[],u=0;u<e.length;u++)n.push(document.getElementsByTagName(e[u].trim()));return n};
+			Multitongue.LanguageIndex=function(t,e){"use strict";this.codeList=t,this.getQueryCode=function(){var t=location.search.match(/[\?&]lang=([^&#]*)/);return t=decodeURIComponent(t&&t[1]||""),this.codeList.indexOf(t)!==-1&&t||null},this.getCookieCode=function(){var t=document.cookie.replace(/(?:(?:^|.*;\s*)langCode\s*\=\s*([^;]*).*$)|^.*$/,"$1");return this.codeList.indexOf(t)===-1?null:t},this.setCookie=function(t){if("number"==typeof t&&(t=this.codeList[t]),this.codeList.indexOf(t)===-1)throw new Error("invalid value for param langIndexOrCode");document.cookie="langCode="+t},this.getHashCode=function(){var t=window.location.hash.substr(1);return this.codeList.indexOf(t)===-1?null:t},this.getBrowserCode=function(t){for(var e=[].concat([window.navigator.userLanguage]).concat(window.navigator.languages).filter(function(t){return t}).map(function(e){return t?e:e.substr(0,2)}),n=this.codeList.map(function(e){return t?e:e.substr(0,2)}),o=null,i=e.length,s=0;s<n.length;s++){var r=e.indexOf(n[s]);r!==-1&&r<i&&(i=r,o=this.codeList[s])}return o},this.getLangCode=function(){return this.getQueryCode()||this.getHashCode()||this.getCookieCode()||this.getBrowserCode(!0)||this.getBrowserCode(!1)},this.getLangIndex=function(t,e){void 0===t&&(t=this.getLangCode()),void 0===e&&(e=0);var n=this.codeList.indexOf(t);return n===-1?e:n}};
+			// do not translate Squarespace preview uses an iframe, unfortunately other iframe uses also won't render
+			var Mt = Multitongue;
+			var mtl = new Mt.LanguageIndex(langCodeList);
+			var langIndex = mtl.getLangIndex();
+			mtl.setCookie(langIndex);
+			var mt = new Mt(langIndex);
+			if (window.location === window.top.location) {
+				mt.reduce(Mt.element("body, title"));
+			}
+			var languageSelectList = [];
+			for (var i = 0; i < langCodeList.length; i++) {
+				if (i === langIndex) {
+					continue;
+				}
+				languageSelectList.push('<a href="' + location.pathname + '?lang=' + langCodeList[i] + location.hash + '" style="font-size: larger; margin-left: 1em;">' + langMap[langCodeList[i]] + '</a>');
+			}
+			var langEl = document.createElement("div");
+			langEl.innerHTML = languageSelectList.join();
+			var emailEl = document.getElementById("email");
+			emailEl.parentNode.appendChild(langEl);
+			emailEl.style.display = "none";
+			var timeElementSet = document.getElementsByTagName("time");
+			for (var i = 0; i < timeElementSet.length; i++) {
+				timeElementSet[i].innerHTML = timeElementSet[i].getAttribute("datetime");
+			}
+			var oddsAndEnds = function () {
+				var findReplaceByClassSet = [
+					{class: "like-count", find: "Likes", replace: "....Likes..Aime..Gustos...."},
+					{class: "like-count", find: "Like", replace: "....Like..Aime..Gusto...."},
+					{class: "ss-social-button", find: "Share", replace: "....Share..Partager..Compartir...."},
+					{class: "tags-cats", find: "categories", replace: "....categories..catégories..categorías...."},
+					{class: "sqs-system-button", find: "Submit", replace: "....Submit..Soumettre..Enviar...."}
+				];
+				
+				for (var i = 0; i < findReplaceByClassSet.length; i++) {
+					var frbc = findReplaceByClassSet[i];
+					var elementSet = document.getElementsByClassName(frbc.class);
+					for (var j = 0; j < elementSet.length; j++) {
+						var element = elementSet[j];
+						var before, after;
+						if (element.tagName.toLowerCase() === "input" && element.type === "submit") {
+							var before = element.getAttribute("value");
+							var after = before.replace(frbc.find, frbc.replace);
+							if (before !== after) {
+								element.setAttribute("value", after);
+								mt.reduce(element);
+							}
+						} else {
+							var before = element.innerHTML;
+							var after = before.replace(frbc.find, frbc.replace);
+							if (before !== after) {
+								element.innerHTML = after;
+								mt.reduce(element);
+							}
+						}
+					}
+				}
+			};
+			oddsAndEnds();
 		</script>
 	</body>
 </html>
